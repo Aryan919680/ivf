@@ -25,7 +25,7 @@ export const ProcedureSelector = ({ selectedProcedure, onProcedureChange }: Proc
             <option value="andrologySemenPreparation">Andrology - Semen Preparation</option>
             <option value="andrologySemenFreezing">Andrology - Semen Freezing</option>
             <option value="embryologyOocyteRetrieval">Embryology - Oocyte Retrieval & Freezing</option>
-            <option value="embryologyEmbryoTransfer">Embryology - Embryo Transfer</option>
+            <option value="embryologyEmbryoTransfer">Embryology - Frozen Embryo Transfer</option>
           </select>
         </FormGroup>
       </FormRow>

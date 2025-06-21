@@ -8,10 +8,10 @@ import { SemenAnalysisSection } from "./form-sections/SemenAnalysisSection";
 import { SemenPreparationSection } from "./form-sections/SemenPreparationSection";
 import { SemenFreezingSection } from "./form-sections/SemenFreezingSection";
 import { OocyteRetrievalSection } from "./form-sections/OocyteRetrievalSection";
-import { EmbryoTransferSection } from "./form-sections/EmbryoTransferSection";
 import { ReportGenerator } from "./ReportGenerator";
 import { Button } from "@/components/ui/button";
 import { ReportData } from "@/types/reportTypes";
+import FrozenEmbryoTransferSection from "./form-sections/FrozenEmbryoTransferSection";
 
 export const LogBookForm = () => {
   const [selectedProcedure, setSelectedProcedure] = useState("");
@@ -81,60 +81,67 @@ const handleInputChange = (section: string, field: string, value: any) => {
       case "embryologyOocyteRetrieval":
         return <OocyteRetrievalSection onDataChange={(data) => handleInputChange('oocyteRetrieval', '', data)}/>;
       case "embryologyEmbryoTransfer":
-        return <EmbryoTransferSection onDataChange={(data) => handleInputChange('embryoTransfer', '', data)}/>;
+        return <FrozenEmbryoTransferSection onDataChange={(data) => handleInputChange('oocyteRetrieval', '', data)} />;
       default:
         return null;
     }
   };
 
-  return (
-    <div className="max-w-6xl mx-auto">
-      <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-lg p-8 space-y-8">
-        <h1 className="text-3xl font-bold text-center text-blue-900 mb-8">
-          Log Book Entry
-        </h1>
-        
-        <PatientInfoSection onDataChange={(data) => handleInputChange('patient', '', data)} />
-        <ClinicalInfoSection onDataChange={(data) => handleInputChange('clinical', '', data)} />
-        <OocyteEmbryoSection onDataChange={(data) => handleInputChange('oocyteEmbryo', '', data)}/>
-        <ProcedureSelector 
-          selectedProcedure={selectedProcedure} 
-          onProcedureChange={setSelectedProcedure} 
-        />
-        
-        {renderProcedureSection()}
+return (
+  <div className="max-w-6xl mx-auto">
+    <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-lg p-8 space-y-8">
+      <h1 className="text-3xl font-bold text-center text-blue-900 mb-8">
+        Log Book Entry
+      </h1>
 
-        <div className="flex justify-between items-center pt-6 border-t">
-          <Button 
-            type="button"
-            onClick={handleGenerateReport}
-            className="bg-green-600 hover:bg-green-700 text-white"
-          >
-            Generate Report
-          </Button>
-          <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
-            Save Entry
-          </Button>
-        </div>
-      </form>
+      {/* Always show procedure selector */}
+      <ProcedureSelector 
+        selectedProcedure={selectedProcedure} 
+        onProcedureChange={setSelectedProcedure} 
+      />
 
-     {showReport && (
-  <ReportGenerator 
-    data={{
-      patientInfo: formData.patient || {},
-      clinicalInfo: formData.clinical || {},
-      oocyteEmbryoInfo: formData.oocyteEmbryo || {},
-      semenAnalysis: formData.semenAnalysis || {},
-      embryoTransfer: formData.embryoTransfer || {},
-      semenPreparation: formData.semenPreparation || {},
-      oocyteRetrieval: formData.oocyteRetrieval || {},
-      semenFreezing: formData.semenFreezing || {},
-      procedureType: selectedProcedure
-    }}
-    onClose={() => setShowReport(false)}
-  />
-)}
+      {/* Show rest of the form only if a procedure is selected */}
+      {selectedProcedure && (
+        <>
+          {/* <PatientInfoSection onDataChange={(data) => handleInputChange('patient', '', data)} />
+          <ClinicalInfoSection onDataChange={(data) => handleInputChange('clinical', '', data)} />
+          <OocyteEmbryoSection onDataChange={(data) => handleInputChange('oocyteEmbryo', '', data)} /> */}
 
-    </div>
-  );
+          {renderProcedureSection()}
+
+          <div className="flex justify-between items-center pt-6 border-t">
+            <Button 
+              type="button"
+              onClick={handleGenerateReport}
+              className="bg-green-600 hover:bg-green-700 text-white"
+            >
+              Generate Report
+            </Button>
+            <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
+              Save Entry
+            </Button>
+          </div>
+        </>
+      )}
+    </form>
+
+    {showReport && (
+      <ReportGenerator 
+        data={{
+          patientInfo: formData.patient || {},
+          clinicalInfo: formData.clinical || {},
+          oocyteEmbryoInfo: formData.oocyteEmbryo || {},
+          semenAnalysis: formData.semenAnalysis || {},
+          embryoTransfer: formData.embryoTransfer || {},
+          semenPreparation: formData.semenPreparation || {},
+          oocyteRetrieval: formData.oocyteRetrieval || {},
+          semenFreezing: formData.semenFreezing || {},
+          procedureType: selectedProcedure
+        }}
+        onClose={() => setShowReport(false)}
+      />
+    )}
+  </div>
+);
+
 };
