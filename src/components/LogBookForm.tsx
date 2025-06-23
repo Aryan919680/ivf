@@ -15,7 +15,7 @@ import FrozenEmbryoTransferSection from "./form-sections/FrozenEmbryoTransferSec
 import SemenAnalysisReport from "./report-sections/SemenAnalysisReport";
 import SemenPreparationReport from "./report-sections/SemenPreparationReport";
 import SemenFreezingReport from "./report-sections/SemenFreezingReport";
-import { OocyteRetrievalReport } from "./report-sections/OocyteRetrievalReport";
+import  OocyteRetrievalReport  from "./report-sections/OocyteRetrievalReport";
 import  EmbryoTransferReport  from "./report-sections/EmbryoTransferReport";
 
 export const LogBookForm = () => {
