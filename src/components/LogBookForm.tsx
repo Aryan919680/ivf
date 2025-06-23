@@ -12,6 +12,11 @@ import { ReportGenerator } from "./ReportGenerator";
 import { Button } from "@/components/ui/button";
 import { ReportData } from "@/types/reportTypes";
 import FrozenEmbryoTransferSection from "./form-sections/FrozenEmbryoTransferSection";
+import SemenAnalysisReport from "./report-sections/SemenAnalysisReport";
+import SemenPreparationReport from "./report-sections/SemenPreparationReport";
+import SemenFreezingReport from "./report-sections/SemenFreezingReport";
+import { OocyteRetrievalReport } from "./report-sections/OocyteRetrievalReport";
+import  EmbryoTransferReport  from "./report-sections/EmbryoTransferReport";
 
 export const LogBookForm = () => {
   const [selectedProcedure, setSelectedProcedure] = useState("");
@@ -52,23 +57,33 @@ const handleInputChange = (section: string, field: string, value: any) => {
     }
   };
 
-  const handleGenerateReport = () => {
-    // Prepare report data from form
-    const reportData: ReportData = {
-      patientInfo: formData.patient || {},
-      clinicalInfo: formData.clinical || {},
-      oocyteEmbryoInfo: formData.oocyteEmbryo || {},
-      semenAnalysis: formData.semenAnalysis || {},
-      embryoTransfer: formData.embryoTransfer || {},
-      semenPreparation: formData.semenPreparation || {},
-      oocyteRetrieval: formData.oocyteRetrieval || {},
-      semenFreezing: formData.semenFreezing || {},
-      procedureType: selectedProcedure
-    };
-    
-    console.log("Generating report with data:", reportData);
-    setShowReport(true);
-  };
+const handleGenerateReport = () => {
+  let reportData: any = {};
+
+  switch (selectedProcedure) {
+    case "andrologySemenAnalysis":
+      reportData = formData.semenAnalysis || {};
+      break;
+    case "andrologySemenPreparation":
+      reportData = formData.semenPreparation || {};
+      break;
+    case "andrologySemenFreezing":
+      reportData = formData.semenFreezing || {};
+      break;
+    case "embryologyOocyteRetrieval":
+      reportData = formData.oocyteRetrieval || {};
+      break;
+    case "embryologyEmbryoTransfer":
+      reportData = formData.embryoTransfer || {};
+      break;
+    default:
+      reportData = {};
+  }
+
+  console.log("Generating report with data:", reportData);
+  setShowReport(true);
+};
+
 
   const renderProcedureSection = () => {
     switch (selectedProcedure) {
@@ -81,7 +96,7 @@ const handleInputChange = (section: string, field: string, value: any) => {
       case "embryologyOocyteRetrieval":
         return <OocyteRetrievalSection onDataChange={(data) => handleInputChange('oocyteRetrieval', '', data)}/>;
       case "embryologyEmbryoTransfer":
-        return <FrozenEmbryoTransferSection onDataChange={(data) => handleInputChange('oocyteRetrieval', '', data)} />;
+        return <FrozenEmbryoTransferSection onDataChange={(data) => handleInputChange('embryoTransfer', '', data)} />;
       default:
         return null;
     }
@@ -124,8 +139,28 @@ return (
         </>
       )}
     </form>
+    {showReport && selectedProcedure === "andrologySemenAnalysis" && (
+  <SemenAnalysisReport data={formData.semenAnalysis || {}}   onClose={() => setShowReport(false)}/>
+)}
 
-    {showReport && (
+{showReport && selectedProcedure === "andrologySemenPreparation" && (
+  <SemenPreparationReport data={formData.semenPreparation || {}}   onClose={() => setShowReport(false)}/>
+)}
+
+{showReport && selectedProcedure === "andrologySemenFreezing" && (
+  <SemenFreezingReport data={formData.semenFreezing || {}}   onClose={() => setShowReport(false)}/>
+)}
+
+{showReport && selectedProcedure === "embryologyOocyteRetrieval" && (
+  <OocyteRetrievalReport data={formData.oocyteRetrieval || {}}   onClose={() => setShowReport(false)}/>
+)}
+
+{showReport && selectedProcedure === "embryologyEmbryoTransfer" && (
+  <EmbryoTransferReport data={formData.embryoTransfer || {}}   onClose={() => setShowReport(false)}/>
+)}
+
+
+    {/* {showReport && (
       <ReportGenerator 
         data={{
           patientInfo: formData.patient || {},
@@ -140,7 +175,7 @@ return (
         }}
         onClose={() => setShowReport(false)}
       />
-    )}
+    )} */}
   </div>
 );
 

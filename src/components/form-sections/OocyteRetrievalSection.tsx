@@ -153,79 +153,81 @@ export const OocyteRetrievalSection = ({ onDataChange }: OocyteRetrievalSectionP
   const [indication, setIndication] = useState("");
   const [spermSource, setSpermSource] = useState("");
   const [oocyteSource, setOocyteSource] = useState("");
-    const [embryos, setEmbryos] = useState([]);
-       const [embryos2, setEmbryos2] = useState([]);
-    const [freshEmbryoCount, setFreshEmbryoCount] = useState("0");
-    const [materialType, setMaterialType] = useState<"oocyte" | "day3" | "day5">("oocyte");
+  const [embryos, setEmbryos] = useState([]);
+  const [embryos2, setEmbryos2] = useState([]);
+  const [freshEmbryoCount, setFreshEmbryoCount] = useState("0");
+  const [materialType, setMaterialType] = useState<"oocyte" | "day3" | "day5">("oocyte");
 
-    // State variables
-const [straws, setStraws] = useState<Straw[]>([
-  {
-    materialType: "oocyte",
-    oocyteData: { mi: "", mii: "", gv: "" },
-    location: { color: "", cryocan: "", canister: "", goblet: "", otherDetails: "" },
-  },
-]);
-
-const updateStrawType = (index: number, type: "oocyte" | "day3" | "day5") => {
-  const updated = [...straws];
-  updated[index].materialType = type;
-
-  // Reset corresponding data
-  if (type === "oocyte") {
-    updated[index].oocyteData = { mi: "", mii: "", gv: "" };
-    delete updated[index].day3Data;
-    delete updated[index].day5Data;
-  } else if (type === "day3") {
-    updated[index].day3Data = { cells: "", grade: "" };
-    delete updated[index].oocyteData;
-    delete updated[index].day5Data;
-  } else if (type === "day5") {
-    updated[index].day5Data = { expansion: "", innerCellMass: "", trophectoderm: "" };
-    delete updated[index].oocyteData;
-    delete updated[index].day3Data;
-  }
-
-  setStraws(updated);
-};
-
-const updateMaterialField = (
-  index: number,
-  type: "oocyteData" | "day3Data" | "day5Data",
-  field: string,
-  value: string
-) => {
-  const updated = [...straws];
-  if (updated[index][type]) {
-    (updated[index][type] as any)[field] = value;
-  }
-  setStraws(updated);
-};
-
-const updateStrawLocation = (index: number, field: string, value: string) => {
-  const updated = [...straws];
-  updated[index].location[field] = value;
-  setStraws(updated);
-};
-
-const addStraw = () => {
-  setStraws([
-    ...straws,
+  // State variables
+  const [straws, setStraws] = useState<Straw[]>([
     {
       materialType: "oocyte",
       oocyteData: { mi: "", mii: "", gv: "" },
       location: { color: "", cryocan: "", canister: "", goblet: "", otherDetails: "" },
     },
   ]);
-};
+
+  const updateStrawType = (index: number, type: "oocyte" | "day3" | "day5") => {
+    const updated = [...straws];
+    updated[index].materialType = type;
+
+    // Reset corresponding data
+    if (type === "oocyte") {
+      updated[index].oocyteData = { mi: "", mii: "", gv: "" };
+      delete updated[index].day3Data;
+      delete updated[index].day5Data;
+    } else if (type === "day3") {
+      updated[index].day3Data = { cells: "", grade: "" };
+      delete updated[index].oocyteData;
+      delete updated[index].day5Data;
+    } else if (type === "day5") {
+      updated[index].day5Data = { expansion: "", innerCellMass: "", trophectoderm: "" };
+      delete updated[index].oocyteData;
+      delete updated[index].day3Data;
+    }
+
+    setStraws(updated);
+  };
+
+  const updateMaterialField = (
+    index: number,
+    type: "oocyteData" | "day3Data" | "day5Data",
+    field: string,
+    value: string
+  ) => {
+    const updated = [...straws];
+    if (updated[index][type]) {
+      (updated[index][type] as any)[field] = value;
+    }
+    setStraws(updated);
+        onDataChange({ straws: updated });
+  };
+
+  const updateStrawLocation = (index: number, field: string, value: string) => {
+    const updated = [...straws];
+    updated[index].location[field] = value;
+    setStraws(updated);
+  };
+
+  const addStraw = () => {
+    setStraws([
+      ...straws,
+      {
+        materialType: "oocyte",
+        oocyteData: { mi: "", mii: "", gv: "" },
+        location: { color: "", cryocan: "", canister: "", goblet: "", otherDetails: "" },
+      },
+    ]);
+  };
 
 
 
-const handleEmbryoChange = (index: number, field: string, value: string) => {
-  const updated = [...embryos];
-  updated[index] = { ...updated[index], [field]: value };
-  setEmbryos(updated);
-};
+  const handleEmbryoChange = (index: number, field: string, value: string) => {
+    const updated = [...embryos];
+    updated[index] = { ...updated[index], [field]: value };
+    setEmbryos(updated);
+    onDataChange({ embryos: updated });
+  };
 
 
 
@@ -267,14 +269,15 @@ const handleEmbryoChange = (index: number, field: string, value: string) => {
       </div>
     );
   };
-   const addEmbryo2 = () => {
+  const addEmbryo2 = () => {
     setEmbryos2([...embryos2, {}]);
   };
   const handleEmbryoChange2 = (index: number, field: string, value: string) => {
-  const updated = [...embryos2];
-  updated[index] = { ...updated[index], [field]: value };
-  setEmbryos2(updated);
-};
+    const updated = [...embryos2];
+    updated[index] = { ...updated[index], [field]: value };
+    setEmbryos2(updated);
+        onDataChange({ embryos2: updated });
+  };
 
 
   return (
@@ -536,19 +539,19 @@ const handleEmbryoChange = (index: number, field: string, value: string) => {
               />
             </FormGroup>
           ))}
-          
-         
+
+
         </FormRow>
-         </FormSection>
-  <FormSection title="Embryo Count">
-                 {embryos.map((embryo, index) => (
-  <EmbryoRow
-    key={index}
-    embryo={embryo}
-    index={index}
-    onChange={handleEmbryoChange}
-  />
-))}
+      </FormSection>
+      <FormSection title="Embryo Count">
+        {embryos.map((embryo, index) => (
+          <EmbryoRow
+            key={index}
+            embryo={embryo}
+            index={index}
+            onChange={handleEmbryoChange}
+          />
+        ))}
 
 
         <button
@@ -558,306 +561,302 @@ const handleEmbryoChange = (index: number, field: string, value: string) => {
         >
           Add Embryo +
         </button>
-       </FormSection>
-  <FormSection title="FREEZING DETAILS">
- {straws.map((straw, index) => (
-  <div key={index} className="border p-4 mb-4 rounded-md">
-    <label className="font-semibold block mb-2">Select Material Type (Straw {index + 1})</label>
-    <div className="flex gap-4 mb-3">
-      {["oocyte", "day3", "day5"].map((type) => (
-        <label key={type} className="flex items-center">
-          <input
-            type="radio"
-            name={`material-${index}`}
-            value={type}
-            checked={straw.materialType === type}
-            onChange={() => updateStrawType(index, type as any)}
-          />
-          <span className="ml-1 capitalize">
-            {type === "day3" ? "Day 3 Embryo" : type === "day5" ? "Day 5 Embryo" : "Oocyte"}
-          </span>
-        </label>
-      ))}
-    </div>
+      </FormSection>
+      <FormSection title="FREEZING DETAILS">
+        {straws.map((straw, index) => (
+          <div key={index} className="border p-4 mb-4 rounded-md">
+            <label className="font-semibold block mb-2">Select Material Type (Straw {index + 1})</label>
+            <div className="flex gap-4 mb-3">
+              {["oocyte", "day3", "day5"].map((type) => (
+                <label key={type} className="flex items-center">
+                  <input
+                    type="radio"
+                    name={`material-${index}`}
+                    value={type}
+                    checked={straw.materialType === type}
+                    onChange={() => updateStrawType(index, type as any)}
+                  />
+                  <span className="ml-1 capitalize">
+                    {type === "day3" ? "Day 3 Embryo" : type === "day5" ? "Day 5 Embryo" : "Oocyte"}
+                  </span>
+                </label>
+              ))}
+            </div>
 
-    {/* Conditional Material Data */}
-    {straw.materialType === "oocyte" && (
-      <FormRow>
-        {["mi", "mii", "gv"].map((field) => (
-          <FormGroup key={field}>
-            <label>{field.toUpperCase()}</label>
+            {/* Conditional Material Data */}
+            {straw.materialType === "oocyte" && (
+              <FormRow>
+                {["mi", "mii", "gv"].map((field) => (
+                  <FormGroup key={field}>
+                    <label>{field.toUpperCase()}</label>
+                    <select
+                      className="w-full px-3 py-2 border rounded-md"
+                      value={straw.oocyteData?.[field] || ""}
+                      onChange={(e) => updateMaterialField(index, "oocyteData", field, e.target.value)}
+                    >
+                      {[...Array(10)].map((_, i) => (
+                        <option key={i} value={i}>{i}</option>
+                      ))}
+                    </select>
+                  </FormGroup>
+                ))}
+              </FormRow>
+            )}
+
+            {straw.materialType === "day3" && (
+              <FormRow>
+                <FormGroup>
+                  <label>Cells</label>
+                  <select
+                    className="w-full px-3 py-2 border rounded-md"
+                    value={straw.day3Data?.cells || ""}
+                    onChange={(e) => updateMaterialField(index, "day3Data", "cells", e.target.value)}
+                  >
+                    {[...Array(20)].map((_, i) => (
+                      <option key={i} value={i + 1}>{i + 1}</option>
+                    ))}
+                  </select>
+                </FormGroup>
+                <FormGroup>
+                  <label>Grade</label>
+                  <select
+                    className="w-full px-3 py-2 border rounded-md"
+                    value={straw.day3Data?.grade || ""}
+                    onChange={(e) => updateMaterialField(index, "day3Data", "grade", e.target.value)}
+                  >
+                    <option value="">Select</option>
+                    {["A", "B", "C"].map((g) => (
+                      <option key={g} value={g}>{g}</option>
+                    ))}
+                  </select>
+                </FormGroup>
+              </FormRow>
+            )}
+
+            {straw.materialType === "day5" && (
+              <FormRow>
+                {[
+                  { label: "Expansion", field: "expansion", options: [1, 2, 3, 4, 5, 6] },
+                  { label: "Inner Cell Mass", field: "innerCellMass", options: ["A", "B", "C"] },
+                  { label: "Trophectoderm", field: "trophectoderm", options: ["A", "B", "C"] },
+                ].map(({ label, field, options }) => (
+                  <FormGroup key={field}>
+                    <label>{label}</label>
+                    <select
+                      className="w-full px-3 py-2 border rounded-md"
+                      value={straw.day5Data?.[field] || ""}
+                      onChange={(e) => updateMaterialField(index, "day5Data", field, e.target.value)}
+                    >
+                      <option value="">Select</option>
+                      {options.map((val) => (
+                        <option key={val} value={val}>{val}</option>
+                      ))}
+                    </select>
+                  </FormGroup>
+                ))}
+              </FormRow>
+            )}
+
+            {/* Straw Location */}
+            <div className="text-blue-700 font-semibold mt-4 mb-2">Straw Location</div>
+            <FormRow>
+              {["color", "cryocan", "canister"].map((field) => (
+                <FormGroup key={field}>
+                  <label>{field === "color" ? "Straw Colour" : field.charAt(0).toUpperCase() + field.slice(1) + " #"}</label>
+                  <input
+                    type="text"
+                    className="w-full px-3 py-2 border rounded-md"
+                    value={straw.location[field]}
+                    onChange={(e) => updateStrawLocation(index, field, e.target.value)}
+                  />
+                </FormGroup>
+              ))}
+            </FormRow>
+            <FormRow>
+              <FormGroup>
+                <label>Goblet #</label>
+                <input
+                  type="text"
+                  className="w-full px-3 py-2 border rounded-md"
+                  value={straw.location.goblet}
+                  onChange={(e) => updateStrawLocation(index, "goblet", e.target.value)}
+                />
+              </FormGroup>
+              <FormGroup className="w-full">
+                <label>More Location Details</label>
+                <textarea
+                  className="w-full px-3 py-2 border rounded-md"
+                  value={straw.location.otherDetails}
+                  onChange={(e) => updateStrawLocation(index, "otherDetails", e.target.value)}
+                />
+              </FormGroup>
+            </FormRow>
+          </div>
+        ))}
+
+        <button
+          type="button"
+          onClick={addStraw}
+          className="mt-2 px-4 py-2 border border-green-500 text-green-600 rounded hover:bg-green-50"
+        >
+          + Add Straw
+        </button>
+
+      </FormSection>
+      <FormSection title="FRESH EMBRYO TRANSFER DETAILS">
+        <FormRow>
+          <FormGroup>
+            <label>No. of Embryos Transferred Fresh</label>
             <select
-              className="w-full px-3 py-2 border rounded-md"
-              value={straw.oocyteData?.[field] || ""}
-              onChange={(e) => updateMaterialField(index, "oocyteData", field, e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md"
+              value={freshEmbryoCount}
+              onChange={(e) => {
+                const value = e.target.value;
+                setFreshEmbryoCount(value);
+                setEmbryos2([]); // Reset embryos when selection changes
+              }}
             >
-              {[...Array(10)].map((_, i) => (
-                <option key={i} value={i}>{i}</option>
+              {["0", "1", "2", "3", "4"].map((v) => (
+                <option key={v} value={v}>
+                  {v}
+                </option>
               ))}
             </select>
           </FormGroup>
-        ))}
-      </FormRow>
-    )}
+        </FormRow>
 
-    {straw.materialType === "day3" && (
-      <FormRow>
-        <FormGroup>
-          <label>Cells</label>
-          <select
-            className="w-full px-3 py-2 border rounded-md"
-            value={straw.day3Data?.cells || ""}
-            onChange={(e) => updateMaterialField(index, "day3Data", "cells", e.target.value)}
-          >
-            {[...Array(20)].map((_, i) => (
-              <option key={i} value={i + 1}>{i + 1}</option>
+        {freshEmbryoCount !== "0" && (
+          <>
+            {embryos2.map((embryo, index) => (
+              <FormRow key={index}>
+                <FormGroup>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Day</label>
+                  <select
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                    value={embryo.day || ""}
+                    onChange={(e) => handleEmbryoChange2(index, "day", e.target.value)}
+                  >
+                    <option value="">Select</option>
+                    <option value="3">Day 3</option>
+                    <option value="5">Day 5</option>
+                  </select>
+                </FormGroup>
+
+                {embryo.day === "3" && (
+                  <>
+                    <FormGroup>
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">Cells</label>
+                      <select
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                        value={embryo.expansion || ""}
+                        onChange={(e) => handleEmbryoChange2(index, "expansion", e.target.value)}
+                      >
+                        <option value="">Select</option>
+                        {[4, 5, 6, 7, 8, 9, 10].map((num) => (
+                          <option key={num} value={num}>{num}</option>
+                        ))}
+                      </select>
+                    </FormGroup>
+                    <FormGroup>
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">Grade</label>
+                      <select
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                        value={embryo.grade || ""}
+                        onChange={(e) => handleEmbryoChange2(index, "grade", e.target.value)}
+                      >
+                        <option value="">Select</option>
+                        {["a", "b", "c", "d"].map((g) => (
+                          <option key={g} value={g}>{g}</option>
+                        ))}
+                      </select>
+                    </FormGroup>
+                    <FormGroup>
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">Trophectoderm</label>
+                      <select
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                        value={embryo.trophectoderm || ""}
+                        onChange={(e) => handleEmbryoChange2(index, "trophectoderm", e.target.value)}
+                      >
+                        <option value="">Select</option>
+                        {["A", "B", "C"].map((val) => (
+                          <option key={val} value={val}>{val}</option>
+                        ))}
+                      </select>
+                    </FormGroup>
+                  </>
+                )}
+
+                {embryo.day === "5" && (
+                  <>
+                    <FormGroup>
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">Expansion Grade</label>
+                      <select
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                        value={embryo.expansion || ""}
+                        onChange={(e) => handleEmbryoChange2(index, "expansion", e.target.value)}
+                      >
+                        <option value="">Select</option>
+                        {[1, 2, 3, 4, 5, 6].map((val) => (
+                          <option key={val} value={val}>{val}</option>
+                        ))}
+                      </select>
+                    </FormGroup>
+                    <FormGroup>
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">Grade</label>
+                      <select
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                        value={embryo.grade || ""}
+                        onChange={(e) => handleEmbryoChange2(index, "grade", e.target.value)}
+                      >
+                        <option value="">Select</option>
+                        {["a", "b", "c", "d"].map((g) => (
+                          <option key={g} value={g}>{g}</option>
+                        ))}
+                      </select>
+                    </FormGroup>
+                    <FormGroup>
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">Inner Cell Mass</label>
+                      <select
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                        value={embryo.innerCellMass || ""}
+                        onChange={(e) => handleEmbryoChange2(index, "innerCellMass", e.target.value)}
+                      >
+                        <option value="">Select</option>
+                        {["A", "B", "C"].map((val) => (
+                          <option key={val} value={val}>{val}</option>
+                        ))}
+                      </select>
+                    </FormGroup>
+                    <FormGroup>
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">Trophectoderm</label>
+                      <select
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                        value={embryo.trophectoderm || ""}
+                        onChange={(e) => handleEmbryoChange2(index, "trophectoderm", e.target.value)}
+                      >
+                        <option value="">Select</option>
+                        {["A", "B", "C"].map((val) => (
+                          <option key={val} value={val}>{val}</option>
+                        ))}
+                      </select>
+                    </FormGroup>
+                  </>
+                )}
+              </FormRow>
             ))}
-          </select>
-        </FormGroup>
-        <FormGroup>
-          <label>Grade</label>
-          <select
-            className="w-full px-3 py-2 border rounded-md"
-            value={straw.day3Data?.grade || ""}
-            onChange={(e) => updateMaterialField(index, "day3Data", "grade", e.target.value)}
-          >
-            <option value="">Select</option>
-            {["A", "B", "C"].map((g) => (
-              <option key={g} value={g}>{g}</option>
-            ))}
-          </select>
-        </FormGroup>
-      </FormRow>
-    )}
+            <div className="mt-6">
+              <button
+                type="button"
+                className="px-4 py-2 border border-blue-500 text-blue-600 rounded hover:bg-blue-50"
+                onClick={addEmbryo2}
+              >
+                + Add Embryo
+              </button>
+            </div>
 
-    {straw.materialType === "day5" && (
-      <FormRow>
-        {[
-          { label: "Expansion", field: "expansion", options: [1, 2, 3, 4, 5, 6] },
-          { label: "Inner Cell Mass", field: "innerCellMass", options: ["A", "B", "C"] },
-          { label: "Trophectoderm", field: "trophectoderm", options: ["A", "B", "C"] },
-        ].map(({ label, field, options }) => (
-          <FormGroup key={field}>
-            <label>{label}</label>
-            <select
-              className="w-full px-3 py-2 border rounded-md"
-              value={straw.day5Data?.[field] || ""}
-              onChange={(e) => updateMaterialField(index, "day5Data", field, e.target.value)}
-            >
-              <option value="">Select</option>
-              {options.map((val) => (
-                <option key={val} value={val}>{val}</option>
-              ))}
-            </select>
-          </FormGroup>
-        ))}
-      </FormRow>
-    )}
-
-    {/* Straw Location */}
-    <div className="text-blue-700 font-semibold mt-4 mb-2">Straw Location</div>
-    <FormRow>
-      {["color", "cryocan", "canister"].map((field) => (
-        <FormGroup key={field}>
-          <label>{field === "color" ? "Straw Colour" : field.charAt(0).toUpperCase() + field.slice(1) + " #"}</label>
-          <input
-            type="text"
-            className="w-full px-3 py-2 border rounded-md"
-            value={straw.location[field]}
-            onChange={(e) => updateStrawLocation(index, field, e.target.value)}
-          />
-        </FormGroup>
-      ))}
-    </FormRow>
-    <FormRow>
-      <FormGroup>
-        <label>Goblet #</label>
-        <input
-          type="text"
-          className="w-full px-3 py-2 border rounded-md"
-          value={straw.location.goblet}
-          onChange={(e) => updateStrawLocation(index, "goblet", e.target.value)}
-        />
-      </FormGroup>
-      <FormGroup className="w-full">
-        <label>More Location Details</label>
-        <textarea
-          className="w-full px-3 py-2 border rounded-md"
-          value={straw.location.otherDetails}
-          onChange={(e) => updateStrawLocation(index, "otherDetails", e.target.value)}
-        />
-      </FormGroup>
-    </FormRow>
-  </div>
-))}
-
-<button
-  type="button"
-  onClick={addStraw}
-  className="mt-2 px-4 py-2 border border-green-500 text-green-600 rounded hover:bg-green-50"
->
-  + Add Straw
-</button>
-
-</FormSection>
-<FormSection title="FRESH EMBRYO TRANSFER DETAILS">
-  <FormRow>
-    <FormGroup>
-      <label>No. of Embryos Transferred Fresh</label>
-      <select
-        className="w-full px-3 py-2 border border-gray-300 rounded-md"
-        value={freshEmbryoCount}
-        onChange={(e) => {
-          const value = e.target.value;
-          setFreshEmbryoCount(value);
-          setEmbryos2([]); // Reset embryos when selection changes
-        }}
-      >
-        {["0", "1", "2", "3", "4"].map((v) => (
-          <option key={v} value={v}>
-            {v}
-          </option>
-        ))}
-      </select>
-    </FormGroup>
-  </FormRow>
-
-  {freshEmbryoCount !== "0" && (
-    <>
-     {embryos2.map((embryo, index) => (
-  <FormRow key={index}>
-    <FormGroup>
-      <label className="block text-sm font-semibold text-gray-700 mb-2">Day</label>
-      <select
-        className="w-full px-3 py-2 border border-gray-300 rounded-md"
-        value={embryo.day || ""}
-        onChange={(e) => handleEmbryoChange2(index, "day", e.target.value)}
-      >
-        <option value="">Select</option>
-        <option value="3">Day 3</option>
-        <option value="5">Day 5</option>
-      </select>
-    </FormGroup>
-
-    {embryo.day === "3" && (
-      <>
-        <FormGroup>
-          <label className="block text-sm font-semibold text-gray-700 mb-2">Cells</label>
-          <select
-            className="w-full px-3 py-2 border border-gray-300 rounded-md"
-            value={embryo.expansion || ""}
-            onChange={(e) => handleEmbryoChange2(index, "expansion", e.target.value)}
-          >
-            <option value="">Select</option>
-            {[4, 5, 6, 7, 8, 9, 10].map((num) => (
-              <option key={num} value={num}>{num}</option>
-            ))}
-          </select>
-        </FormGroup>
-        <FormGroup>
-          <label className="block text-sm font-semibold text-gray-700 mb-2">Grade</label>
-          <select
-            className="w-full px-3 py-2 border border-gray-300 rounded-md"
-            value={embryo.grade || ""}
-            onChange={(e) => handleEmbryoChange2(index, "grade", e.target.value)}
-          >
-            <option value="">Select</option>
-            {["a", "b", "c", "d"].map((g) => (
-              <option key={g} value={g}>{g}</option>
-            ))}
-          </select>
-        </FormGroup>
-        <FormGroup>
-          <label className="block text-sm font-semibold text-gray-700 mb-2">Trophectoderm</label>
-          <select
-            className="w-full px-3 py-2 border border-gray-300 rounded-md"
-            value={embryo.trophectoderm || ""}
-            onChange={(e) => handleEmbryoChange2(index, "trophectoderm", e.target.value)}
-          >
-            <option value="">Select</option>
-            {["A", "B", "C"].map((val) => (
-              <option key={val} value={val}>{val}</option>
-            ))}
-          </select>
-        </FormGroup>
-      </>
-    )}
-
-    {embryo.day === "5" && (
-      <>
-        <FormGroup>
-          <label className="block text-sm font-semibold text-gray-700 mb-2">Expansion Grade</label>
-          <select
-            className="w-full px-3 py-2 border border-gray-300 rounded-md"
-            value={embryo.expansion || ""}
-            onChange={(e) => handleEmbryoChange2(index, "expansion", e.target.value)}
-          >
-            <option value="">Select</option>
-            {[1, 2, 3, 4, 5, 6].map((val) => (
-              <option key={val} value={val}>{val}</option>
-            ))}
-          </select>
-        </FormGroup>
-        <FormGroup>
-          <label className="block text-sm font-semibold text-gray-700 mb-2">Grade</label>
-          <select
-            className="w-full px-3 py-2 border border-gray-300 rounded-md"
-            value={embryo.grade || ""}
-            onChange={(e) => handleEmbryoChange2(index, "grade", e.target.value)}
-          >
-            <option value="">Select</option>
-            {["a", "b", "c", "d"].map((g) => (
-              <option key={g} value={g}>{g}</option>
-            ))}
-          </select>
-        </FormGroup>
-        <FormGroup>
-          <label className="block text-sm font-semibold text-gray-700 mb-2">Inner Cell Mass</label>
-          <select
-            className="w-full px-3 py-2 border border-gray-300 rounded-md"
-            value={embryo.innerCellMass || ""}
-            onChange={(e) => handleEmbryoChange2(index, "innerCellMass", e.target.value)}
-          >
-            <option value="">Select</option>
-            {["A", "B", "C"].map((val) => (
-              <option key={val} value={val}>{val}</option>
-            ))}
-          </select>
-        </FormGroup>
-        <FormGroup>
-          <label className="block text-sm font-semibold text-gray-700 mb-2">Trophectoderm</label>
-          <select
-            className="w-full px-3 py-2 border border-gray-300 rounded-md"
-            value={embryo.trophectoderm || ""}
-            onChange={(e) => handleEmbryoChange2(index, "trophectoderm", e.target.value)}
-          >
-            <option value="">Select</option>
-            {["A", "B", "C"].map((val) => (
-              <option key={val} value={val}>{val}</option>
-            ))}
-          </select>
-        </FormGroup>
-      </>
-    )}
-  </FormRow>
-))}
-
-     <div className="mt-6">
-  <button
-    type="button"
-    className="px-4 py-2 border border-blue-500 text-blue-600 rounded hover:bg-blue-50"
-    onClick={addEmbryo2}
-  >
-    + Add Embryo
-  </button>
-</div>
-
-    </>
-  )}
-</FormSection>
-
-
-
+          </>
+        )}
+      </FormSection>
     </>
   );
 };
