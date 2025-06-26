@@ -59,8 +59,8 @@ const handlePatientIdChange = (value: string) => {
 const fetchDataByPatientId = async (id: string) => {
   if (!id || !selectedProcedure) return;
 
-  //const baseUrl = "https://ivf-ht0d.onrender.com/api";
-    const baseUrl = "http://localhost:4000";
+  const baseUrl = "https://ivf-ht0d.onrender.com";
+    // const baseUrl = "http://localhost:4000";
   let endpoint = "";
 
   switch (selectedProcedure) {
@@ -122,8 +122,8 @@ const handleFetchByDate = async () => {
   setFetchError("");
   setFetching(true);
 
-  //const baseUrl = "https://ivf-ht0d.onrender.com/api";
-   const baseUrl = "http://localhost:4000";
+  const baseUrl = "https://ivf-ht0d.onrender.com";
+  //  const baseUrl = "http://localhost:4000";
   let endpoint = "";
 
   switch (selectedProcedure) {
@@ -163,8 +163,8 @@ const handleFetchByDate = async () => {
 const handleSubmit = async (e: React.FormEvent) => {
   e.preventDefault();
 
- // const baseUrl = "https://ivf-ht0d.onrender.com/api"; // Change if different
-  const baseUrl = "http://localhost:4000";
+ const baseUrl = "https://ivf-ht0d.onrender.com"; 
+  // const baseUrl = "http://localhost:4000";
   let endpoint = "";
   let payload = {};
 
