@@ -21,6 +21,7 @@ export const SignUpForm = () => {
     password: "",
     labName: "",
     country: "",
+    userName: ""
   });
 
   const handleInputChange = (field: string, value: string) => {
@@ -84,7 +85,17 @@ export const SignUpForm = () => {
                 onChange={(e) => handleInputChange("password", e.target.value)}
               />
             </div>
-
+ <div>
+              <Label htmlFor="email" className="text-sm font-medium">Username</Label>
+              <Input
+                id="userName"
+                type="name"
+                placeholder="name"
+                required
+                value={formData.userName}
+                onChange={(e) => handleInputChange("userName", e.target.value)}
+              />
+            </div>
             {/* Lab Name */}
             <div>
               <Label htmlFor="labName" className="text-sm font-medium">Clinic / Lab Name</Label>
