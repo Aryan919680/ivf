@@ -88,12 +88,12 @@ export const SignUpForm = () => {
  <div>
               <Label htmlFor="email" className="text-sm font-medium">Username</Label>
               <Input
-                id="userName"
+                id="username"
                 type="name"
                 placeholder="name"
                 required
-                value={formData.userName}
-                onChange={(e) => handleInputChange("userName", e.target.value)}
+                value={formData.username}
+                onChange={(e) => handleInputChange("username", e.target.value)}
               />
             </div>
             {/* Lab Name */}
