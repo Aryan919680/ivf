@@ -14,7 +14,9 @@ interface Embryo {
   expansion?: string;
   innerCellMass?: string;
   trophectoderm?: string;
+  dayType: "day3" | "day5"; // NEW
 }
+
 
 interface EmbryoRowProps {
   embryo: Embryo;
@@ -49,99 +51,106 @@ interface Straw {
 const EmbryoRow = ({ embryo, index, onChange }: EmbryoRowProps) => {
   return (
     <div className="mb-6 border p-4 rounded-md shadow-sm">
-      <h3 className="text-lg font-semibold mb-2">Embryo Development – Day 3 Morphology</h3>
+     <h3 className="text-lg font-semibold mb-2">
+  Embryo Development – {embryo.dayType === "day3" ? "Day 3 Morphology" : "Day 5 Grading"}
+</h3>
 
-      <FormGroup>
-        <label className="block text-sm font-semibold text-gray-700 mb-1">Number of Cells</label>
-        <select
-          className="w-full px-3 py-2 border border-gray-300 rounded-md"
-          value={embryo.numberOfCells || ""}
-          onChange={(e) => onChange(index, "numberOfCells", e.target.value)}
-        >
-          <option value="">Select</option>
-          {[...Array(20)].map((_, i) => (
-            <option key={i + 1} value={String(i + 1)}>
-              {i + 1}
-            </option>
-          ))}
-        </select>
-      </FormGroup>
+{embryo.dayType === "day3" && (
+  <>
+    <FormGroup>
+      <label className="block text-sm font-semibold text-gray-700 mb-1">Number of Cells</label>
+      <select
+        className="w-full px-3 py-2 border border-gray-300 rounded-md"
+        value={embryo.numberOfCells || ""}
+        onChange={(e) => onChange(index, "numberOfCells", e.target.value)}
+      >
+        <option value="">Select</option>
+        {[...Array(20)].map((_, i) => (
+          <option key={i + 1} value={String(i + 1)}>
+            {i + 1}
+          </option>
+        ))}
+      </select>
+    </FormGroup>
 
-      <FormGroup>
-        <label className="block text-sm font-semibold text-gray-700 mb-1">Grade</label>
-        <div className="flex gap-4">
-          {["A", "B", "C"].map((grade) => (
-            <label key={grade} className="flex items-center">
-              <input
-                type="radio"
-                name={`grade-${index}`}
-                value={grade}
-                checked={embryo.grade === grade}
-                onChange={(e) => onChange(index, "grade", e.target.value)}
-              />
-              <span className="ml-1">{grade}</span>
-            </label>
-          ))}
-        </div>
-      </FormGroup>
+    <FormGroup>
+      <label className="block text-sm font-semibold text-gray-700 mb-1">Grade</label>
+      <div className="flex gap-4">
+        {["A", "B", "C"].map((grade) => (
+          <label key={grade} className="flex items-center">
+            <input
+              type="radio"
+              name={`grade-${index}`}
+              value={grade}
+              checked={embryo.grade === grade}
+              onChange={(e) => onChange(index, "grade", e.target.value)}
+            />
+            <span className="ml-1">{grade}</span>
+          </label>
+        ))}
+      </div>
+    </FormGroup>
+  </>
+)}
 
-      <hr className="my-4" />
+{embryo.dayType === "day5" && (
+  <>
+    <FormGroup>
+      <label className="block text-sm font-semibold text-gray-700 mb-1">Expansion Grade</label>
+      <div className="flex gap-4 flex-wrap">
+        {[1, 2, 3, 4, 5, 6].map((val) => (
+          <label key={val} className="flex items-center">
+            <input
+              type="radio"
+              name={`expansion-${index}`}
+              value={String(val)}
+              checked={embryo.expansion === String(val)}
+              onChange={(e) => onChange(index, "expansion", e.target.value)}
+            />
+            <span className="ml-1">{val}</span>
+          </label>
+        ))}
+      </div>
+    </FormGroup>
 
-      <h3 className="text-lg font-semibold mb-2">Blastocyst Assessment – Day 5 Grading</h3>
+    <FormGroup>
+      <label className="block text-sm font-semibold text-gray-700 mb-1">Inner Cell Mass</label>
+      <div className="flex gap-4">
+        {["A", "B", "C"].map((val) => (
+          <label key={val} className="flex items-center">
+            <input
+              type="radio"
+              name={`innerCellMass-${index}`}
+              value={val}
+              checked={embryo.innerCellMass === val}
+              onChange={(e) => onChange(index, "innerCellMass", e.target.value)}
+            />
+            <span className="ml-1">{val}</span>
+          </label>
+        ))}
+      </div>
+    </FormGroup>
 
-      <FormGroup>
-        <label className="block text-sm font-semibold text-gray-700 mb-1">Expansion Grade</label>
-        <div className="flex gap-4 flex-wrap">
-          {[1, 2, 3, 4, 5, 6].map((val) => (
-            <label key={val} className="flex items-center">
-              <input
-                type="radio"
-                name={`expansion-${index}`}
-                value={String(val)}
-                checked={embryo.expansion === String(val)}
-                onChange={(e) => onChange(index, "expansion", e.target.value)}
-              />
-              <span className="ml-1">{val}</span>
-            </label>
-          ))}
-        </div>
-      </FormGroup>
+    <FormGroup>
+      <label className="block text-sm font-semibold text-gray-700 mb-1">Trophectoderm</label>
+      <div className="flex gap-4">
+        {["A", "B", "C"].map((val) => (
+          <label key={val} className="flex items-center">
+            <input
+              type="radio"
+              name={`trophectoderm-${index}`}
+              value={val}
+              checked={embryo.trophectoderm === val}
+              onChange={(e) => onChange(index, "trophectoderm", e.target.value)}
+            />
+            <span className="ml-1">{val}</span>
+          </label>
+        ))}
+      </div>
+    </FormGroup>
+  </>
+)}
 
-      <FormGroup>
-        <label className="block text-sm font-semibold text-gray-700 mb-1">Inner Cell Mass</label>
-        <div className="flex gap-4">
-          {["A", "B", "C"].map((val) => (
-            <label key={val} className="flex items-center">
-              <input
-                type="radio"
-                name={`innerCellMass-${index}`}
-                value={val}
-                checked={embryo.innerCellMass === val}
-                onChange={(e) => onChange(index, "innerCellMass", e.target.value)}
-              />
-              <span className="ml-1">{val}</span>
-            </label>
-          ))}
-        </div>
-      </FormGroup>
-
-      <FormGroup>
-        <label className="block text-sm font-semibold text-gray-700 mb-1">Trophectoderm</label>
-        <div className="flex gap-4">
-          {["A", "B", "C"].map((val) => (
-            <label key={val} className="flex items-center">
-              <input
-                type="radio"
-                name={`trophectoderm-${index}`}
-                value={val}
-                checked={embryo.trophectoderm === val}
-                onChange={(e) => onChange(index, "trophectoderm", e.target.value)}
-              />
-              <span className="ml-1">{val}</span>
-            </label>
-          ))}
-        </div>
-      </FormGroup>
     </div>
   );
 };
@@ -222,6 +231,13 @@ export const OocyteRetrievalSection = ({ onDataChange,handlePatientIdChange,defa
     ]);
   };
 
+const addDay3Embryo = () => {
+  setEmbryos((prev) => [...prev, { dayType: "day3" }]);
+};
+
+const addDay5Embryo = () => {
+  setEmbryos((prev) => [...prev, { dayType: "day5" }]);
+};
 
 
   const handleEmbryoChange = (index: number, field: string, value: string) => {
@@ -556,23 +572,35 @@ export const OocyteRetrievalSection = ({ onDataChange,handlePatientIdChange,defa
 
       </FormSection>
       <FormSection title="Embryo Count">
-        {embryos.map((embryo, index) => (
-          <EmbryoRow
-            key={index}
-            embryo={embryo}
-            index={index}
-            onChange={handleEmbryoChange}
-          />
-        ))}
+      <FormSection title="Embryo Count">
+  {embryos.map((embryo, index) => (
+    <EmbryoRow
+      key={index}
+      embryo={embryo}
+      index={index}
+      onChange={handleEmbryoChange}
+    />
+  ))}
 
+  <div className="flex gap-4 mt-4">
+    <button
+      type="button"
+      className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+      onClick={addDay3Embryo}
+    >
+      Add Day 3 Embryo +
+    </button>
 
-        <button
-          type="button"
-          className="mt-4 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
-          onClick={addEmbryo}
-        >
-          Add Embryo +
-        </button>
+    <button
+      type="button"
+      className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
+      onClick={addDay5Embryo}
+    >
+      Add Day 5 Embryo +
+    </button>
+  </div>
+</FormSection>
+
       </FormSection>
       <FormSection title="FREEZING DETAILS">
         {straws.map((straw, index) => (
