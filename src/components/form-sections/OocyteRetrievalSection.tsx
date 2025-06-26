@@ -1,10 +1,12 @@
 import { FormSection } from "./FormSection";
 import { FormRow } from "./FormRow";
 import { FormGroup } from "./FormGroup";
-import { useState } from "react";
+import { useState,useEffect } from "react";
 
 interface OocyteRetrievalSectionProps {
   onDataChange?: (data: Record<string, any>) => void;
+  handlePatientIdChange?: (data: Record<string, any>) => void;
+  defaultData?: any;
 }
 interface Embryo {
   numberOfCells?: string;
@@ -43,8 +45,6 @@ interface Straw {
     otherDetails: string;
   };
 }
-
-
 
 const EmbryoRow = ({ embryo, index, onChange }: EmbryoRowProps) => {
   return (
@@ -146,18 +146,15 @@ const EmbryoRow = ({ embryo, index, onChange }: EmbryoRowProps) => {
   );
 };
 
-
-
-
-export const OocyteRetrievalSection = ({ onDataChange }: OocyteRetrievalSectionProps) => {
+export const OocyteRetrievalSection = ({ onDataChange,handlePatientIdChange,defaultData }: OocyteRetrievalSectionProps) => {
   const [indication, setIndication] = useState("");
   const [spermSource, setSpermSource] = useState("");
   const [oocyteSource, setOocyteSource] = useState("");
   const [embryos, setEmbryos] = useState([]);
-  const [embryos2, setEmbryos2] = useState([]);
+  const [freshEmbryo, setFreshEmbryo] = useState([]);
   const [freshEmbryoCount, setFreshEmbryoCount] = useState("0");
   const [materialType, setMaterialType] = useState<"oocyte" | "day3" | "day5">("oocyte");
-
+ const [localData, setLocalData] = useState(defaultData || {});
   // State variables
   const [straws, setStraws] = useState<Straw[]>([
     {
@@ -166,7 +163,12 @@ export const OocyteRetrievalSection = ({ onDataChange }: OocyteRetrievalSectionP
       location: { color: "", cryocan: "", canister: "", goblet: "", otherDetails: "" },
     },
   ]);
-
+ useEffect(() => {
+    if (defaultData) {
+      setLocalData(defaultData);
+      onDataChange(defaultData); // sync back to parent if needed
+    }
+  }, [defaultData]);
   const updateStrawType = (index: number, type: "oocyte" | "day3" | "day5") => {
     const updated = [...straws];
     updated[index].materialType = type;
@@ -270,13 +272,13 @@ export const OocyteRetrievalSection = ({ onDataChange }: OocyteRetrievalSectionP
     );
   };
   const addEmbryo2 = () => {
-    setEmbryos2([...embryos2, {}]);
+    setFreshEmbryo([...freshEmbryo, {}]);
   };
   const handleEmbryoChange2 = (index: number, field: string, value: string) => {
-    const updated = [...embryos2];
+    const updated = [...freshEmbryo];
     updated[index] = { ...updated[index], [field]: value };
-    setEmbryos2(updated);
-        onDataChange({ embryos2: updated });
+    setFreshEmbryo(updated);
+        onDataChange({ freshEmbryo: updated });
   };
 
 
@@ -288,20 +290,28 @@ export const OocyteRetrievalSection = ({ onDataChange }: OocyteRetrievalSectionP
 
       <FormSection title="PATIENT INFORMATION">
         <FormRow>
-          <FormGroup>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Patient ID</label>
-            <input
-              type="text"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md"
-              onChange={(e) => handleChange("patientId", e.target.value)}
-            />
-          </FormGroup>
+  
+
+<FormGroup>
+  <label className="block text-sm font-semibold text-gray-700 mb-2">Patient ID</label>
+  <input
+    type="text"
+    className="w-full px-3 py-2 border border-gray-300 rounded-md"
+     onChange={(e) => {
+      const val = e.target.value;
+      onDataChange({ patientId: val });
+      handlePatientIdChange(val);
+    }}
+  />
+</FormGroup>
+
           <FormGroup>
             <label className="block text-sm font-semibold text-gray-700 mb-2">Patient Name</label>
             <input
               type="text"
               className="w-full px-3 py-2 border border-gray-300 rounded-md"
               onChange={(e) => handleChange("patientName", e.target.value)}
+               value={localData?.patientName || ""}
             />
           </FormGroup>
           <FormGroup>
@@ -311,6 +321,7 @@ export const OocyteRetrievalSection = ({ onDataChange }: OocyteRetrievalSectionP
               min="0"
               className="w-full px-3 py-2 border border-gray-300 rounded-md"
               onChange={(e) => handleChange("patientAge", parseInt(e.target.value))}
+               value={localData?.patientAge || ""}
             />
           </FormGroup>
         </FormRow>
@@ -322,6 +333,7 @@ export const OocyteRetrievalSection = ({ onDataChange }: OocyteRetrievalSectionP
               type="text"
               className="w-full px-3 py-2 border border-gray-300 rounded-md"
               onChange={(e) => handleChange("partnerName", e.target.value)}
+                 value={localData?.partnerName || ""}
             />
           </FormGroup>
           <FormGroup>
@@ -331,6 +343,7 @@ export const OocyteRetrievalSection = ({ onDataChange }: OocyteRetrievalSectionP
               min="0"
               className="w-full px-3 py-2 border border-gray-300 rounded-md"
               onChange={(e) => handleChange("partnerAge", parseInt(e.target.value))}
+                  value={localData?.partnerAge || ""}
             />
           </FormGroup>
           <FormGroup>
@@ -339,6 +352,7 @@ export const OocyteRetrievalSection = ({ onDataChange }: OocyteRetrievalSectionP
               type="text"
               className="w-full px-3 py-2 border border-gray-300 rounded-md"
               onChange={(e) => handleChange("amh", e.target.value)}
+              value={localData?.amh || ""}
             />
           </FormGroup>
         </FormRow>
@@ -348,11 +362,12 @@ export const OocyteRetrievalSection = ({ onDataChange }: OocyteRetrievalSectionP
             <label className="block text-sm font-semibold text-gray-700 mb-2">Indication</label>
             <select
               className="w-full px-3 py-2 border border-gray-300 rounded-md"
-              value={indication}
+              value={indication || localData?.indication}
               onChange={(e) => {
                 setIndication(e.target.value);
                 handleChange("indication", e.target.value);
               }}
+              
             >
               <option value="">Select</option>
               <option value="sperm factor">Sperm Factor</option>
@@ -387,6 +402,7 @@ export const OocyteRetrievalSection = ({ onDataChange }: OocyteRetrievalSectionP
             <select
               className="w-full px-3 py-2 border border-gray-300 rounded-md"
               onChange={(e) => handleChange("cycleType", e.target.value)}
+              value={localData?.cycleType || ''}
             >
               <option value="">Select</option>
               <option value="primary">Primary</option>
@@ -398,7 +414,7 @@ export const OocyteRetrievalSection = ({ onDataChange }: OocyteRetrievalSectionP
             <label className="block text-sm font-semibold text-gray-700 mb-2">Sperm Source</label>
             <select
               className="w-full px-3 py-2 border border-gray-300 rounded-md"
-              value={spermSource}
+              value={spermSource || localData?.spermSource}
               onChange={(e) => {
                 setSpermSource(e.target.value);
                 handleChange("spermSource", e.target.value);
@@ -408,21 +424,14 @@ export const OocyteRetrievalSection = ({ onDataChange }: OocyteRetrievalSectionP
               <option value="self">Self</option>
               <option value="donor">Donor</option>
             </select>
-            {spermSource === "donor" && (
-              <input
-                type="text"
-                className="mt-2 w-full px-3 py-2 border border-gray-300 rounded-md"
-                placeholder="Donor ID"
-                onChange={(e) => handleChange("donorSpermId", e.target.value)}
-              />
-            )}
+            
           </FormGroup>
 
           <FormGroup>
             <label className="block text-sm font-semibold text-gray-700 mb-2">Oocyte Source</label>
             <select
               className="w-full px-3 py-2 border border-gray-300 rounded-md"
-              value={oocyteSource}
+              value={oocyteSource || localData?.oocyteSource}
               onChange={(e) => {
                 setOocyteSource(e.target.value);
                 handleChange("oocyteSource", e.target.value);
@@ -432,7 +441,7 @@ export const OocyteRetrievalSection = ({ onDataChange }: OocyteRetrievalSectionP
               <option value="self">Self</option>
               <option value="donor">Donor</option>
             </select>
-            {oocyteSource === "donor" && (
+            {/* {oocyteSource === "donor" && (
               <>
                 <input
                   type="text"
@@ -447,7 +456,7 @@ export const OocyteRetrievalSection = ({ onDataChange }: OocyteRetrievalSectionP
                   onChange={(e) => handleChange("donorOocyteId", e.target.value)}
                 />
               </>
-            )}
+            )} */}
           </FormGroup>
         </FormRow>
 
@@ -457,6 +466,7 @@ export const OocyteRetrievalSection = ({ onDataChange }: OocyteRetrievalSectionP
             <select
               className="w-full px-3 py-2 border border-gray-300 rounded-md"
               onChange={(e) => handleChange("cycleNumber", e.target.value)}
+              value={localData?.cycleNumber || ''}
             >
               <option value="">Select</option>
               {[...Array(10)].map((_, i) => (
@@ -472,6 +482,7 @@ export const OocyteRetrievalSection = ({ onDataChange }: OocyteRetrievalSectionP
               rows={3}
               className="w-full px-3 py-2 border border-gray-300 rounded-md"
               onChange={(e) => handleChange("stimulationDetails", e.target.value)}
+              value={localData?.stimulationDetails || ''}
             />
           </FormGroup>
         </FormRow>
@@ -494,6 +505,7 @@ export const OocyteRetrievalSection = ({ onDataChange }: OocyteRetrievalSectionP
             <select
               className="w-full px-3 py-2 border border-gray-300 rounded-md"
               onChange={(e) => handleChange("hcgTriggerTime", e.target.value)}
+              value={localData?.hcgTriggerTime || ''}
             >
               <option value="">Select</option>
               {[...Array(24)].map((_, i) => (
@@ -506,6 +518,7 @@ export const OocyteRetrievalSection = ({ onDataChange }: OocyteRetrievalSectionP
             <select
               className="w-full px-3 py-2 border border-gray-300 rounded-md"
               onChange={(e) => handleChange("oocyteRetrievalTime", e.target.value)}
+              value={localData?.oocyteRetrievalTime || ''}
             >
               <option value="">Select</option>
               {[...Array(24)].map((_, i) => (
@@ -514,34 +527,33 @@ export const OocyteRetrievalSection = ({ onDataChange }: OocyteRetrievalSectionP
             </select>
           </FormGroup>
         </FormRow>
+<FormRow>
+  {[
+    "ExpectedOCCs",
+    "OCCsRetrieved",
+    "MII",
+    "MI",
+    "GVs",
+    "OocytesFrozen",
+    "OocytesForIVF",
+    "OocytesInjected",
+    "TimeOfInjection"
+  ].map((field) => (
+    <FormGroup key={field}>
+      <label className="block text-sm font-semibold text-gray-700 mb-2">
+        {field.replace(/([A-Z])/g, " $1").trim()}
+      </label>
+      <input
+        type="number"
+        min="0"
+        className="w-full px-3 py-2 border border-gray-300 rounded-md"
+        value={localData?.[field] ?? ""} // ✅ Set default value
+        onChange={(e) => handleChange(field, parseFloat(e.target.value))}
+      />
+    </FormGroup>
+  ))}
+</FormRow>
 
-        <FormRow>
-          {[
-            "ExpectedOCCs",
-            "OCCsRetrieved",
-            "MII",
-            "MI",
-            "GVs",
-            "OocytesFrozen",
-            "OocytesForIVF",
-            "OocytesInjected",
-            "TimeOfInjection"
-          ].map((field) => (
-            <FormGroup key={field}>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
-                {field.replace(/([A-Z])/g, " $1").trim()}
-              </label>
-              <input
-                type="number"
-                min="0"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                onChange={(e) => handleChange(field, parseFloat(e.target.value))}
-              />
-            </FormGroup>
-          ))}
-
-
-        </FormRow>
       </FormSection>
       <FormSection title="Embryo Count">
         {embryos.map((embryo, index) => (
@@ -713,7 +725,7 @@ export const OocyteRetrievalSection = ({ onDataChange }: OocyteRetrievalSectionP
               onChange={(e) => {
                 const value = e.target.value;
                 setFreshEmbryoCount(value);
-                setEmbryos2([]); // Reset embryos when selection changes
+                setFreshEmbryo([]); // Reset embryos when selection changes
               }}
             >
               {["0", "1", "2", "3", "4"].map((v) => (
@@ -727,7 +739,7 @@ export const OocyteRetrievalSection = ({ onDataChange }: OocyteRetrievalSectionP
 
         {freshEmbryoCount !== "0" && (
           <>
-            {embryos2.map((embryo, index) => (
+            {freshEmbryo.map((embryo, index) => (
               <FormRow key={index}>
                 <FormGroup>
                   <label className="block text-sm font-semibold text-gray-700 mb-2">Day</label>

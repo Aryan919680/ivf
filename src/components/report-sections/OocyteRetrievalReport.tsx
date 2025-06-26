@@ -60,7 +60,7 @@ interface OocyteRetrievalReportData {
   OocytesInjected?: number;
   TimeOfInjection?: number;
   embryos?: Embryo[];
-  embryos2?: Embryo2[];
+  freshEmbryo?: Embryo2[];
   straws?: Straw[];
 }
 
@@ -158,7 +158,7 @@ export default function OocyteRetrievalReport({ data, onClose }: Props) {
               </>
             )}
 
-            {data.embryos2?.length > 0 && (
+            {data.freshEmbryo?.length > 0 && (
               <>
                 <h4 className="font-semibold text-blue-700 mt-6 mb-2">Embryos (Blastocysts)</h4>
                 <table className="w-full border text-sm mb-4">
@@ -171,7 +171,7 @@ export default function OocyteRetrievalReport({ data, onClose }: Props) {
                     </tr>
                   </thead>
                   <tbody>
-                    {data.embryos2.map((emb, idx) => (
+                    {data.freshEmbryo.map((emb, idx) => (
                       <tr key={idx}>
                         <td className="border px-2 py-1">{emb.day}</td>
                         <td className="border px-2 py-1">{emb.expansion}</td>

@@ -4,9 +4,10 @@ import { FormGroup } from "./FormGroup";
 
 interface SemenAnalysisSectionProps {
   onDataChange?: (data: any) => void;
+  handlePatientIdChange?: (data: any) => void;
 }
 
-export const SemenAnalysisSection = ({ onDataChange }: SemenAnalysisSectionProps) => {
+export const SemenAnalysisSection = ({ onDataChange,handlePatientIdChange }: SemenAnalysisSectionProps) => {
   const handleChange = (field: string, value: any) => {
     if (onDataChange) {
       onDataChange({ [field]: value });

@@ -43,7 +43,12 @@ export const LoginForm = () => {
   return (
    <Card className="max-w-md mx-auto mt-12 bg-white shadow-xl rounded-xl overflow-hidden">
   <CardHeader className="text-center mt-4">
-    <CardTitle className="text-2xl font-semibold text-blue-600">Login</CardTitle>
+      <div className="text-center mb-6">
+        <img src="/test.png" alt="LogHub logo" className="h-16 mx-auto mb-2" />
+        <h1 className="text-2xl font-bold text-gray-900">LogHub</h1>
+          <p className="text-sm">by Webiosis</p>
+        <p className="text-sm text-blue-600">The IVF Lab’s Smartest Logbook</p>
+      </div>
   </CardHeader>
   <CardContent>
     <form onSubmit={handleSubmit} className="p-6">
