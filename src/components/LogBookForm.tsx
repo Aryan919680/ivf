@@ -1,16 +1,11 @@
 
 import { useState } from "react";
-import { PatientInfoSection } from "./form-sections/PatientInfoSection";
-import { ClinicalInfoSection } from "./form-sections/ClinicalInfoSection";
-import { OocyteEmbryoSection } from "./form-sections/OocyteEmbryoSection";
 import { ProcedureSelector } from "./form-sections/ProcedureSelector";
 import { SemenAnalysisSection } from "./form-sections/SemenAnalysisSection";
 import { SemenPreparationSection } from "./form-sections/SemenPreparationSection";
 import { SemenFreezingSection } from "./form-sections/SemenFreezingSection";
 import { OocyteRetrievalSection } from "./form-sections/OocyteRetrievalSection";
-import { ReportGenerator } from "./ReportGenerator";
 import { Button } from "@/components/ui/button";
-import { ReportData } from "@/types/reportTypes";
 import FrozenEmbryoTransferSection from "./form-sections/FrozenEmbryoTransferSection";
 import SemenAnalysisReport from "./report-sections/SemenAnalysisReport";
 import SemenPreparationReport from "./report-sections/SemenPreparationReport";
@@ -18,11 +13,11 @@ import SemenFreezingReport from "./report-sections/SemenFreezingReport";
 import  OocyteRetrievalReport  from "./report-sections/OocyteRetrievalReport";
 import  EmbryoTransferReport  from "./report-sections/EmbryoTransferReport";
 import { useEffect,useRef } from "react";
-import { format } from "date-fns"; // Optional for date formatting
 export const LogBookForm = () => {
   const [selectedProcedure, setSelectedProcedure] = useState("");
   const [showReport, setShowReport] = useState(false);
   const [formData, setFormData] = useState<any>({});
+  const [isEditing, setIsEditing] = useState(false);
 
 const handleInputChange = (section: string, field: string, value: any) => {
   setFormData((prev: any) => ({
@@ -33,9 +28,6 @@ const handleInputChange = (section: string, field: string, value: any) => {
     },
   }));
 };
-
-
-
 const [startDate, setStartDate] = useState("");
 const [endDate, setEndDate] = useState("");
 const [fetchedReports, setFetchedReports] = useState<any[]>([]);
@@ -94,10 +86,11 @@ const fetchDataByPatientId = async (id: string) => {
       ...prev,
       [getSectionKeyFromProcedure(selectedProcedure)]: data,
     }));
-
+    setIsEditing(true)
     alert("✅ Patient data loaded.");
   } catch (err) {
     console.error("Patient not found:", err);
+    setIsEditing(false);
   }
 };
 
@@ -215,11 +208,46 @@ const handleSubmit = async (e: React.FormEvent) => {
     const data = await response.json();
     console.log("Form submitted successfully:", data);
     alert("✅ Form saved successfully.");
+    setIsEditing(false); // reset to new entry mode
+    setFormData({});     // optionally clear form
   } catch (error) {
     console.error("Submission error:", error);
     alert("❌ Failed to save entry. Check console for details.");
+     setIsEditing(false); // reset after update
   }
 };
+
+const handleUpdate = async () => {
+  const sectionKey = getSectionKeyFromProcedure(selectedProcedure);
+  const sectionData = formData[sectionKey];
+  const recordId = sectionData?.id; // use ID from fetched data
+
+  if (!recordId) {
+    console.error("No record ID available for update");
+    return;
+  }
+
+  try {
+    const response = await fetch(
+      `https://ivf-ht0d.onrender.com/api/${sectionKey.toLowerCase()}/${recordId}`,
+      {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(sectionData),
+      }
+    );
+
+    if (!response.ok) throw new Error("Update failed");
+
+    const data = await response.json();
+    console.log("Record updated successfully:", data);
+    alert("✅ Data updated successfully!");
+  } catch (error) {
+    console.error("Error updating record:", error);
+    alert("❌ Update failed.");
+  }
+};
+
 
 
 const handleGenerateReport = () => {
@@ -248,7 +276,6 @@ const handleGenerateReport = () => {
   console.log("Generating report with data:", reportData);
   setShowReport(true);
 };
-
 
   const renderProcedureSection = () => {
     switch (selectedProcedure) {
@@ -335,7 +362,7 @@ return (
         onClick={handleFetchByDate}
         className="bg-indigo-600 hover:bg-indigo-700 text-white"
       >
-        {fetching ? "Fetching..." : "Fetch Reports"}
+        {fetching ? "Fetching..." : "Fetch Logs"}
       </Button>
     </div>
   </div>
@@ -360,24 +387,35 @@ return (
       {/* Show rest of the form only if a procedure is selected */}
       {selectedProcedure && (
         <>
-          {/* <PatientInfoSection onDataChange={(data) => handleInputChange('patient', '', data)} />
-          <ClinicalInfoSection onDataChange={(data) => handleInputChange('clinical', '', data)} />
-          <OocyteEmbryoSection onDataChange={(data) => handleInputChange('oocyteEmbryo', '', data)} /> */}
-
           {renderProcedureSection()}
 
-          <div className="flex justify-between items-center pt-6 border-t">
-            <Button 
-              type="button"
-              onClick={handleGenerateReport}
-              className="bg-green-600 hover:bg-green-700 text-white"
-            >
-              Generate Report
-            </Button>
-            <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
-              Save Entry
-            </Button>
-          </div>
+         <div className="flex justify-between items-center pt-6 border-t">
+  <Button
+    type="button"
+    onClick={handleGenerateReport}
+    className="bg-green-600 hover:bg-green-700 text-white"
+  >
+    Generate Report
+  </Button>
+
+  {isEditing ? (
+    <Button
+      type="button"
+      onClick={handleUpdate}
+      className="bg-yellow-500 hover:bg-yellow-600 text-white"
+    >
+      Update Entry
+    </Button>
+  ) : (
+    <Button
+      type="submit"
+      className="bg-blue-600 hover:bg-blue-700 text-white"
+    >
+      Save Entry
+    </Button>
+  )}
+</div>
+
         </>
       )}
     </form>
@@ -401,23 +439,6 @@ return (
   <EmbryoTransferReport data={formData.embryoTransfer || {}}   onClose={() => setShowReport(false)}/>
 )}
 
-
-    {/* {showReport && (
-      <ReportGenerator 
-        data={{
-          patientInfo: formData.patient || {},
-          clinicalInfo: formData.clinical || {},
-          oocyteEmbryoInfo: formData.oocyteEmbryo || {},
-          semenAnalysis: formData.semenAnalysis || {},
-          embryoTransfer: formData.embryoTransfer || {},
-          semenPreparation: formData.semenPreparation || {},
-          oocyteRetrieval: formData.oocyteRetrieval || {},
-          semenFreezing: formData.semenFreezing || {},
-          procedureType: selectedProcedure
-        }}
-        onClose={() => setShowReport(false)}
-      />
-    )} */}
   </div>
 );
 
