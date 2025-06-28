@@ -12,7 +12,7 @@ export const Navigation = () => {
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center space-x-3">
             <img 
-              src="/placeholder.svg" 
+              src="/test.png" 
               alt="Webiosis IVF Logo" 
               className="h-10 w-auto rounded-md bg-gray-100 p-1"
             />
@@ -26,9 +26,7 @@ export const Navigation = () => {
             <Link to="/signup" className="text-blue-600 hover:text-blue-800 font-semibold transition-colors">
               Sign Up
             </Link>
-            <span className="text-gray-400 line-through cursor-not-allowed">
-              Sample Report
-            </span>
+            
           </div>
 
           <button
